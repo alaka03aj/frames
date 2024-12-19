@@ -4,6 +4,7 @@ import argparse
 
 def initialize_camera(camera_index=0):
     """Initializes the camera and returns the capture object."""
+    
     print(f"Attempting to initialize camera with index {camera_index}...")
     video_capture = cv2.VideoCapture(camera_index)
     if not video_capture.isOpened():
