@@ -17,6 +17,7 @@ venv/
 # Ignore output frames and video files
 raw_frames/
 preprocessed_frames/
+output_directory/
 *.avi
 *.mp4
 
