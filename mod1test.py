@@ -75,7 +75,7 @@ def reduce_noise(frames, method, output_dir):
     if method == "gaussian":
         denoised_frames = [cv2.GaussianBlur(frame, (5, 5), 0) for frame in frames]
     elif method == "bilateral":
-        denoised_frames = [cv2.bilateralFilter(frame, 9, 45, 45) for frame in frames]
+        denoised_frames = [cv2.bilateralFilter(frame, 5, 45, 45) for frame in frames]
     else:
         raise ValueError("Unsupported noise reduction method.")
     save_intermediate_frames(denoised_frames, output_dir, "denoised_frame")
@@ -135,7 +135,7 @@ def apply_skip_connections(frames, output_dir):
 
 
 # --- Main Function ---
-def main(source, output_dir, sampling_rate=5, noise_method="gaussian"):
+def main(source, output_dir, noise_method, sampling_rate=5): 
     cap = capture_video(source)
     
     raw_output_dir = os.path.join(output_dir, "raw_frames")
@@ -148,7 +148,7 @@ def main(source, output_dir, sampling_rate=5, noise_method="gaussian"):
 
     frames = extract_frames(cap, raw_output_dir)
     sampled_frames = sample_frames(frames, sampling_rate, sampled_output_dir)
-    key_frames = extract_key_frames(sampled_frames, threshold=0.6, output_dir=key_output_dir)
+    key_frames = extract_key_frames(sampled_frames, threshold=0.5, output_dir=key_output_dir)
     resized_frames = resize_frames(key_frames, size=(600, 400), output_dir=resized_output_dir)
     denoised_frames = reduce_noise(resized_frames, method=noise_method, output_dir=denoised_output_dir)
     normalized_frames = normalize_frames(denoised_frames, output_dir=normalized_output_dir)
@@ -166,4 +166,4 @@ if __name__ == "__main__":
     parser.add_argument("--noise-method", type=str, default="bilateral", help="Noise reduction method (gaussian or bilateral).")
     args = parser.parse_args()
 
-    main(args.source, args.output, args.sampling_rate, args.noise_method)
+    main(args.source, args.output, args.noise_method, args.sampling_rate)
